@@ -1,0 +1,11 @@
+{% block body %}
+    <div id="container" class="flex justify-center items-center">
+        <p class=""> Vous avez reçu un nouveau message de : <strong> {{ nom }} </strong> </p> <br>
+        <p class=""> Contenu du message :</p>
+        <br> <br> 
+        <div class="flex justify-center items-center border border-gray-300 mt-8">
+            {{ message }}
+        </div>
+       
+    </div>
+{% endblock %}

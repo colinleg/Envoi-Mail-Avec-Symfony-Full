@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comment envoyer un mail à partir de Symfony{% endblock %}
+
+{% block body %}
+<div class="font-bold flex justify-center flex-col items-center mt-8">
+
+        <h1 class="text-4xl text-blue-800">Comment envoyer un mail à partir de Symfony ( via un service et MailerInterface )</h1> 
+
+        <h2 class="text-2xl text-blue-700 mt-8">1 / Configuration</h2>
+
+        <div class="w-100 lg:w-1/2">
+            
+            <p class="p-4 border mt-8">composer require symfony/form</p>
+            <p class="p-4 border mt-8">composer require symfony/mailer</p>
+            <p class="p-4 border mt-8">Configurer le . env comme suit :</p>
+            <p class="p-4 border mt-8">dans la section symfony/mailer : MAILER_DSN=smtp://${MAIL_USER}:${MAIL_PASS}@${MAIL_HOST}:${MAIL_PORT}</p>
+            <p class="p-4 border mt-8">.. ce qui permet de définir séparément les informations en mettant <br> MAIL_USER=XXX <br> MAIL_PASS=XXX<br> MAIL_HOST=XXX<br> MAIL_PORT=XXX<br> juste au dessus</p>
+            <p class="p-4 border mt-8">Attention : le MAIL_USER doit être ici la partie avant le '@' de l'adresse mail ( vérifié sur laposte.net )</p>
+
+        </div>
+
+        
+        <h2 class="text-2xl text-blue-700 mt-8">2 / Création du formulaire</h2>
+
+        <div class="w-100 lg:w-1/2">
+            <p class="p-4 border mt-8">php bin/console make:form</p>
+            <p class="p-4 border mt-8">Créer le formulaire dans Form/monFormType.php avec au moins l'objet du message et un message</p>
+            <p class="p-4 border mt-8">Rappel : on accèdera à ce formulaire à partir du controller avec : </p>
+            <p class="p-4 border mt-8">$form = $this->createForm(ContactType::class, null);<br>$form->handleRequest($req);</p>
+
+        </div>
+
+        <h2 class="text-2xl text-blue-700 mt-8">3 / Création d'un service pour l'envoi de mail</h2>
+
+        <div class="w-100 lg:w-1/2">
+
+            <p class="p-4 border mt-8">use Symfony\Component\Mailer\MailerInterface;<br>use Symfony\Component\Mime\Email;<br>use Twig\Environment;</p>
+            <p class="p-4 border mt-8">Dans le construct, injection de dépendance : MailerInterface, et Environment (twig)</p>
+            <p class="p-4 border mt-8">Une fonction publique : send qui a comme parametre :</p>
+            <p class="p-4 border mt-8">
+                1 : un array qui sera de la forme [ 'objet' => 'objet du message' ]<br>
+                2 : une string qui sera l'adresse de l'envoyeur<br>
+                3 : une string qui sera l'adresse du récepteur<br>
+                4 : une template de type html.twig<br>
+                5 : un array de paramètres : dans lequel on récupèrera les données du form
+            </p>
+            <p class="p-4 border mt-8">on instancie un new Email() qui sera entre () pour ensuite chainer les actions</p>
+            <p class="p-4 border mt-8">On note la fonction ->html() de l'objet Email (de Component\Mime\Email ) qui permet de rendre une vue twig avec :</p>
+            <p class="p-4 border mt-8">$this->twig->render($template, $parameters), 2e param : "text/html"</p>
+            <p class="p-4 border mt-8">On peut s'imaginer explorer les différentes fonctions de l'objet Email pour par exemple lier une image ou autre type de contenu</p>
+            <p class="p-4 border mt-8">Cette fonction finit par un : $this->mailer->send($email); ... $mailer étant MailerInterface</p>
+
+        </div>
+
+        <h2 class="text-2xl text-blue-700 mt-8">4 / La logique du controller </h2>
+
+        <div class="w-100 lg:w-1/2">
+
+            <p class="p-4 border mt-8">On récupère les data du formulaire avec form->handleRequest($req) ( injecté dans construct ou fonction )</p>
+            <p class="p-4 border mt-8">Si le formulaire est soumis et valide, on prend les données avec $form->getData()</p>
+            <p class="p-4 border mt-8">on utilise le service crée précedemment, et plus précisément sa fonction 'send' dans laquelle on complète les paramètres objet du message, nom, message ... à partir du $data du form.</p>
+            <p class="p-4 border mt-8">on rend la view twig</p>
+            <p class="p-4 border mt-8">on peut s'imaginer avoir plusieurs modèles de mail rangés dans template/exMails</p>
+            <p class="p-4 border mt-8">on peut s'imaginer récupérer l'adresse mail de l'user dans la request pour lui envoyer le mail</p>
+
+        </div>
+        
+        <h2 class="text-2xl text-blue-700 mt-8">5 / Notes  </h2>
+
+        <div class="w-100 lg:w-1/2">
+
+            <p class="p-4 border mt-8">A changer en fonction de l'hébergeur mail :</p>
+            <p class="p-4 border mt-8">le chemin en dur pour la boite de réception, dans templates/base.html.twig</p>
+            <p class="p-4 border mt-8">la configuration dans le .env : taper smtp + nomhébergeur dans Google pour connaitre les infos</p>
+
+        </div>
+</div>
+{% endblock %}

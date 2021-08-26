@@ -2,11 +2,17 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
+        <title>{% block title %}Mail Sender{% endblock %}</title>
+         <header>
+            <div class="h-16 bg-green-300 flex justify-around items-center">
+                <a class="text-white text-xl font-bold" href="{{ path('mail_sender') }}">Envoyer un message</a>
+                <a class="text-white text-xl font-bold" target="_blank" href="https://web-mail.laposte.net/main.html#inbox/">Boite de réception</a>
+                <a class="text-white text-xl font-bold" href="/">Home</a>
+                
+            </div>
+        </header>
         {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
+             <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         {% endblock %}
 
         {% block javascripts %}
